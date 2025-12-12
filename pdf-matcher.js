@@ -1,6 +1,7 @@
 const axios = require("axios");
 const fs = require("fs").promises;
 const path = require("path");
+const { pathToFileURL } = require("url");
 
 // Polyfill DOM APIs for pdfjs-dist in Node.js
 if (typeof globalThis.DOMMatrix === 'undefined') {
@@ -34,6 +35,8 @@ let pdfjsLib = null;
 async function initPdfJs() {
   if (!pdfjsLib) {
     pdfjsLib = await import("pdfjs-dist/legacy/build/pdf.mjs");
+    const workerPath = require.resolve("pdfjs-dist/legacy/build/pdf.worker.mjs");
+    pdfjsLib.GlobalWorkerOptions.workerSrc = pathToFileURL(workerPath).toString();
   }
   return pdfjsLib;
 }
